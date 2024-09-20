@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 5050;
 app.use(express.json()); // to parse req.body, for parsing application/json
 
 // console.log(process.env.MONGO_URI);
+app.use(express.urlencoded({ extended: true })); //To parse from data (url encoded) - POSTMAN
 
 app.use("/api/auth", authRoutes);
 

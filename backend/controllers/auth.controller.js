@@ -11,13 +11,17 @@ export const signup = async (req, res) => {
     }
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ error: "Username is alredy taken" });
+      return res.status(400).json({ error: "Username is already taken" });
     }
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       return res.status(400).json({ error: "Email is already taken" });
     }
-
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters long" });
+    }
     // hash password
 
     const salt = await bcrypt.genSalt(10);
@@ -46,16 +50,19 @@ export const signup = async (req, res) => {
       console.log("Error is signup controller", error.message);
       res.status(500).json({ error: "Internal Server Error" });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in signup controller", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-export const login = async (reg, res) => {
+export const login = async (req, res) => {
   res.json({
     data: "You hit the login page",
   });
 };
 
-export const logout = async (reg, res) => {
+export const logout = async (req, res) => {
   res.json({
     data: "You hit the logout page",
   });
