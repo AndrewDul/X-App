@@ -1,7 +1,11 @@
 export const singup = async (reg, res) => {
-  res.json({
-    data: "You hit the singup page",
-  });
+  try {
+    const { fullName, username, email, password } = req.body;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+  } catch (error) {}
 };
 
 export const login = async (reg, res) => {
