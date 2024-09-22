@@ -20,12 +20,12 @@ export const followUnfollowUser = async (req, res) => {
     const userToModify = await User.findById(id);
     const currentUser = await User.findById(req.user._id);
 
-    if (id === req.user._id) {
+    if (id === req.user._id.toString()) {
       return res
         .status(400)
         .json({ error: "You can't follow / unfollow yourself" });
     }
-    if (!userToModify || currentUser) {
+    if (!userToModify || !currentUser) {
       return res.status(400).json({ error: "User not found" });
     }
 
@@ -33,8 +33,15 @@ export const followUnfollowUser = async (req, res) => {
 
     if (isFollowing) {
       //Unfollow the user
+      await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
+      await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
+      res.status(200).json({ message: "User unfollowed successfuly" });
     } else {
       //follow the user
+      await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
+      await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
+      //Send notification to user
+      res.status(200).json({ message: "User followed successfuly" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
